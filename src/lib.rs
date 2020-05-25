@@ -61,7 +61,7 @@ fn packet_loop(mut nic: tun_tap::Iface, ih: InterfaceHandle) -> io::Result<()> {
             nic.as_raw_fd(),
             nix::poll::EventFlags::POLLIN,
         )];
-        let n = nix::poll::poll(&mut pfd[..], 1000).map_err(|e| e.as_errno().unwrap())?;
+        let n = nix::poll::poll(&mut pfd[..], 10).map_err(|e| e.as_errno().unwrap())?;
         assert_ne!(n, -1);
         if n == 0 {
             let mut cmg = ih.manager.lock().unwrap();
@@ -74,8 +74,7 @@ fn packet_loop(mut nic: tun_tap::Iface, ih: InterfaceHandle) -> io::Result<()> {
         assert_eq!(n, 1);
         let nbytes = nic.recv(&mut buf[..])?;
 
-        // TODO: if self.terminate && Arc::get_strong_refs(ih) == 1; then
-        // tear down all connections and return.
+        // TODO: if self.terminate && Arc::get_strong_refs(ih) == 1; then tear down all connections and return.
 
         // if s/without_packet_info/new/:
         //
